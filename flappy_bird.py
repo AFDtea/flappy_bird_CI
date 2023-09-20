@@ -2,7 +2,7 @@ import pygame
 from pygame.locals import *
 import sys
 
-import random, time
+import random
 
 
 pygame.init()
@@ -21,7 +21,7 @@ white = pygame.Color(255,255,255)
 
 #Setting size of the screen
 screen_width = 600
-screen_height = 499
+screen_height = 500
 
 # Initializing the Screen
 screen = pygame.display.set_mode((screen_width,screen_height))
