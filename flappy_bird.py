@@ -11,10 +11,10 @@ FPS = 32
 FramePerSec = pygame.time.Clock()
 
 # Images
-wallimage = "pipe.png"
-backgroundimage = "sky.png"
-birdimage = "bird_pic.png"
-sealevelimage = "grass.png"
+wallimage = "Images/pipe.png"
+backgroundimage = "Images/sky.png"
+birdimage = "Images/bird_pic.png"
+sealevelimage = "Images/grass.png"
 game_images = {}
 
 white = pygame.Color(255,255,255)
@@ -208,16 +208,16 @@ if __name__ == "__main__":
 
     # Loading in number images for score
     game_images['scoreimages'] = (
-        pygame.transform.scale(pygame.image.load('0.png').convert_alpha(), (40,40)),
-        pygame.transform.scale(pygame.image.load('1.png').convert_alpha(), (40,40)),
-        pygame.transform.scale(pygame.image.load('2.png').convert_alpha(), (40,40)),
-        pygame.transform.scale(pygame.image.load('3.png').convert_alpha(), (40,40)),
-        pygame.transform.scale(pygame.image.load('4.png').convert_alpha(), (40,40)),
-        pygame.transform.scale(pygame.image.load('5.png').convert_alpha(), (40,40)),
-        pygame.transform.scale(pygame.image.load('6.png').convert_alpha(), (40,40)),
-        pygame.transform.scale(pygame.image.load('7.png').convert_alpha(), (40,40)),
-        pygame.transform.scale(pygame.image.load('8.png').convert_alpha(), (40,40)),
-        pygame.transform.scale(pygame.image.load('9.png').convert_alpha(), (40,40))
+        pygame.transform.scale(pygame.image.load('Images/0.png').convert_alpha(), (40,40)),
+        pygame.transform.scale(pygame.image.load('Images/1.png').convert_alpha(), (40,40)),
+        pygame.transform.scale(pygame.image.load('Images/2.png').convert_alpha(), (40,40)),
+        pygame.transform.scale(pygame.image.load('Images/3.png').convert_alpha(), (40,40)),
+        pygame.transform.scale(pygame.image.load('Images/4.png').convert_alpha(), (40,40)),
+        pygame.transform.scale(pygame.image.load('Images/5.png').convert_alpha(), (40,40)),
+        pygame.transform.scale(pygame.image.load('Images/6.png').convert_alpha(), (40,40)),
+        pygame.transform.scale(pygame.image.load('Images/7.png').convert_alpha(), (40,40)),
+        pygame.transform.scale(pygame.image.load('Images/8.png').convert_alpha(), (40,40)),
+        pygame.transform.scale(pygame.image.load('Images/9.png').convert_alpha(), (40,40))
     )
 
     # Loading in all other pictures for the game
