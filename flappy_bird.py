@@ -111,6 +111,7 @@ def flappygame():
             bird_flapped = False
         # Updating bird height
         playerHeight = game_images['flappybird'].get_height()
+        print(vertical)
         vertical = vertical + min(bird_velocity_y, elevation - vertical - playerHeight)
   
         # move pipes to the left
