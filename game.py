@@ -59,40 +59,6 @@ class FlappyGame:
                                 pygame.image.load(wallimage).convert_alpha())
         self.game_images['pipeimage'] = pygame.transform.scale(self.game_images["pipeimage"][0], (85,300)), pygame.transform.scale(self.game_images["pipeimage"][1], (85,300))
 
-        # Initializing variables for game and bird
-        self.score = 0
-        self.horizontal = int(self.w/5)
-        self.vertical = int(self.w/2)
-        self.ground = 0
-        self.mytempheight = 100
-
-        self.pipeVelX = -4 #pipe velocity along x
- 
-        self.bird_velocity_y = -9  # bird velocity
-        self.bird_Max_Vel_Y = 10   
-        self.birdAccY = 1
-        
-        # velocity while flapping
-        self.bird_flap_velocity = -8
-        
-        # It is true only when the bird is flapping
-        self.bird_flapped = False
-
-        # Generating pipe for blitting on screen
-        first_pipe = self.createPipe()
-    
-        # List containing lower pipes
-        self.down_pipes = [
-            {'x': self.w+300-self.mytempheight,
-            'y': first_pipe[1]['y']}
-        ]
-    
-        # List Containing upper pipes 
-        self.up_pipes = [ 
-            {'x': self.w+300-self.mytempheight,
-            'y': first_pipe[0]['y']}
-        ]  
-
     
     # Method to setup and run the game
     def play_step(self):
@@ -102,15 +68,16 @@ class FlappyGame:
                 pygame.quit()
                 sys.exit()
             # Flapping when space or up is pressed
-            if event.type == KEYDOWN and (event.key == K_SPACE or event.key == K_UP):
+            elif event.type == KEYDOWN and (event.key == K_SPACE or event.key == K_UP):
                 if self.vertical > 0:
                     self.bird_velocity_y = self.bird_flap_velocity
-                    self.bird_flapped = True 
+                    self.bird_flapped = True
 
         # Exiting the loop if the game is over
         g_over = False
         if self.isGameOver(self.horizontal, self.vertical, self.up_pipes, self.down_pipes):
             g_over = True
+            self.reset()
             return g_over, self.score
 
         # check for your_score
@@ -157,13 +124,45 @@ class FlappyGame:
         if self.up_pipes[0]['x'] < -self.game_images['pipeimage'][0].get_width():
             self.up_pipes.pop(0)
             self.down_pipes.pop(0)
-        
-        self.update_ui()
 
-        # Set the framepersecond
-        self.FramePerSec.tick(self.FPS)
+        self.update_ui()  
 
         return g_over, self.score
+    
+    def reset(self):
+        # Initializing variables for game and bird
+        self.score = 0
+        self.horizontal = int(self.w/5)
+        self.vertical = int(self.w/2)
+        self.ground = 0
+        self.mytempheight = 100
+
+        self.pipeVelX = -4 #pipe velocity along x
+ 
+        self.bird_velocity_y = -9  # bird velocity
+        self.bird_Max_Vel_Y = 10   
+        self.birdAccY = 1
+        
+        # velocity while flapping
+        self.bird_flap_velocity = -8
+        
+        # It is true only when the bird is flapping
+        self.bird_flapped = False
+
+        # Generating pipe for blitting on screen
+        first_pipe = self.createPipe()
+    
+        # List containing lower pipes
+        self.down_pipes = [
+            {'x': self.w+240-self.mytempheight,
+            'y': first_pipe[1]['y']}
+        ]
+    
+        # List Containing upper pipes 
+        self.up_pipes = [ 
+            {'x': self.w+240-self.mytempheight,
+            'y': first_pipe[0]['y']}
+        ]  
 
     def createPipe(self):
         offset = self.h/3.5
@@ -172,7 +171,7 @@ class FlappyGame:
         # generating random height of pipes
         y2 = offset + random.randrange(
         0, int(self.h - self.game_images['sea_level'].get_height() - 1.1 * offset))  
-        pipeX = self.h + 10
+        pipeX = self.w + 10
         y1 = pipeHeight - y2 + offset 
         pipe = [
             
@@ -203,12 +202,6 @@ class FlappyGame:
         return False
 
     def update_ui(self):
-        # sets the coordinates of bird
-        horizontal = int(self.w/5)
-        vertical = int((self.h - self.game_images['flappybird'].get_height())/2)
-
-        ground = 0
-
          # Blitting game images
         self.screen.blit(self.game_images['background'], (0, 0))
         for upperPipe, lowerPipe in zip(self.up_pipes, self.down_pipes):
@@ -216,15 +209,14 @@ class FlappyGame:
                         (upperPipe['x'], upperPipe['y']))
             self.screen.blit(self.game_images['pipeimage'][1],
                         (lowerPipe['x'], lowerPipe['y']))
-
-        self.screen.blit(self.game_images['background'], (0, 0))
-        self.screen.blit(self.game_images['flappybird'], (horizontal, vertical))
-        self.screen.blit(self.game_images['sea_level'], (ground, self.elevation))
+            
+        self.screen.blit(self.game_images['flappybird'], (self.horizontal, self.vertical))
+        self.screen.blit(self.game_images['sea_level'], (0, self.elevation))
 
         # Fetching the digits of score
         numbers = [int(x) for x in list(str(self.score))]
         width = 0
-        
+         
         # finding the width of score images from numbers
         for num in numbers:
             width += self.game_images['scoreimages'][num].get_width()
@@ -238,6 +230,24 @@ class FlappyGame:
         # Refresh the screen
         pygame.display.update()  
 
+        self.FramePerSec.tick(self.FPS)
+
+    def update_bird_ui(self):
+        # sets the coordinates of bird
+        horizontal = int(self.w/5)
+        vertical = int((self.h - self.game_images['flappybird'].get_height())/2)
+
+        ground = 0
+
+        self.screen.blit(self.game_images['background'], (0, 0))
+        self.screen.blit(self.game_images['flappybird'], (horizontal, vertical))
+        self.screen.blit(self.game_images['sea_level'], (ground, self.elevation))
+        
+        # Refresh the screen
+        pygame.display.update()
+
+        self.FramePerSec.tick(self.FPS)
+
 if __name__ == "__main__":
     print("WELCOME TO THE FLAPPY BIRD GAME")
     print("Press space or enter to start the game")
@@ -250,12 +260,16 @@ if __name__ == "__main__":
                     pygame.quit()
                     sys.exit()
                 # Flapping when space or up is pressed
-                if event.type == KEYDOWN and (event.key == K_SPACE or event.key == K_UP):
+                elif event.type == KEYDOWN and (event.key == K_SPACE or event.key == K_UP):
+                    game.reset()
                     while True:
                         game_over, score = game.play_step()
 
                         if game_over == True:
                             break
+                else:
+                    game.update_bird_ui()
+
 
     
 
