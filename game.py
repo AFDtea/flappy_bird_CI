@@ -75,18 +75,21 @@ class FlappyGame:
 
         # Exiting the loop if the game is over
         g_over = False
+        reward = 0
         if self.isGameOver(self.horizontal, self.vertical, self.up_pipes, self.down_pipes):
             g_over = True
             self.reset()
-            return g_over, self.score
+            reward = -10
+            return reward, g_over, self.score
 
         # check for your_score
-        playerMidPos = self.horizontal + self.game_images['flappybird'].get_width()/2
+        self.playerMidPos = self.horizontal + self.game_images['flappybird'].get_width()/2
         for pipe in self.up_pipes:
-            pipeMidPos = pipe['x'] + self.game_images['pipeimage'][0].get_width()/2
-            if pipeMidPos <= playerMidPos < pipeMidPos + (self.pipeVelX * -1):
+            self.pipeMidPos = pipe['x'] + self.game_images['pipeimage'][0].get_width()/2
+            if self.pipeMidPos <= self.playerMidPos < self.pipeMidPos + (self.pipeVelX * -1):
                 # Printing the score
                 self.score += 1
+                reward = 10
                 if self.score >= 10:
                     self.pipeVelX = -12
                 elif self.score >= 8:
@@ -127,7 +130,7 @@ class FlappyGame:
 
         self.update_ui()  
 
-        return g_over, self.score
+        return reward, g_over, self.score
     
     def reset(self):
         # Initializing variables for game and bird
@@ -263,7 +266,7 @@ if __name__ == "__main__":
                 elif event.type == KEYDOWN and (event.key == K_SPACE or event.key == K_UP):
                     game.reset()
                     while True:
-                        game_over, score = game.play_step()
+                        reward, game_over, score = game.play_step()
 
                         if game_over == True:
                             break
