@@ -7,7 +7,7 @@ import random
 
 pygame.init()
 
-FPS = 32
+FPS = fcreat
 FramePerSec = pygame.time.Clock()
 
 # Images
