@@ -38,7 +38,7 @@ class FlappyGame:
         self.screen = pygame.display.set_mode((self.w,self.h))
         self.elevation = self.h * .8
 
-        self.FPS = 32
+        self.FPS = 10
         self.FramePerSec = pygame.time.Clock()
 
         # Images
@@ -96,7 +96,7 @@ class FlappyGame:
         if self.isGameOver(self.horizontal, self.vertical, self.up_pipes, self.down_pipes):
             g_over = True
             self.reset()
-            reward = -10
+            reward = -100
             return reward, g_over, self.score
 
         # check for your_score
@@ -106,7 +106,7 @@ class FlappyGame:
             if self.pipeMidPos <= self.playerMidPos < self.pipeMidPos + (self.pipeVelX * -1):
                 # Printing the score
                 self.score += 1
-                reward = 10
+                reward = 100
                 if self.score >= 10:
                     self.pipeVelX = -12
                 elif self.score >= 8:

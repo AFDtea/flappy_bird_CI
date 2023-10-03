@@ -22,26 +22,24 @@ class Agent:
 
 
     def get_state(self, game):
-        bird_pos = game.playerMidPos
-        m_pipe_pos = game.pipeMidPos
+        bird_y = game.vertical
+        up_pipe_y = game.up_pipes[0]['y']
+        down_pipe_y = game.down_pipes[0]['y']
         bird_x = game.horizontal
-        pipe_x = game.pipe[0]['x']
+        pipe_x = game.up_pipes[0]['x']
 
         state = [
             # below lower pipe
-            bird_pos > m_pipe_pos,
+            bird_y > down_pipe_y + 30,
 
             # above upper pipe
-            bird_pos < m_pipe_pos,
+            bird_y < up_pipe_y + 30,
 
             # Danger ground
-            (bird_pos > 335),
+            (bird_y > 300),
 
             # Danger pipe
-            pipe_x < (bird_x + 30),
-
-            # Flapped
-            game.bird_flapped
+            pipe_x < (bird_x + 150),
             ]
 
         return np.array(state, dtype=int)
@@ -131,4 +129,5 @@ if __name__ == '__main__':
         # perform move and get new state
         reward, done, score = game.play_step(final_move)
         state_new = agent.get_state(game)
-        # print(agent.get_state(game))
+        print(game.up_pipes[0]['x'])
+        print(agent.get_state(game))

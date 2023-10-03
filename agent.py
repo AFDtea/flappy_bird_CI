@@ -22,20 +22,21 @@ class Agent:
 
 
     def get_state(self, game):
-        bird_pos = game.playerMidPos
-        m_pipe_pos = game.pipeMidPos
+        bird_y = game.vertical
+        up_pipe_y = game.up_pipes[0]['y']
+        down_pipe_y = game.down_pipes[0]['y']
         bird_x = game.horizontal
-        pipe_x = game.pipe[0]['x']
+        pipe_x = game.up_pipes[0]['x']
 
         state = [
             # below lower pipe
-            bird_pos > m_pipe_pos,
+            bird_y > down_pipe_y,
 
             # above upper pipe
-            bird_pos < m_pipe_pos,
+            bird_y < up_pipe_y,
 
             # Danger ground
-            (bird_pos > 335),
+            (bird_y > 300),
 
             # Danger pipe
             pipe_x < (bird_x + 30),
