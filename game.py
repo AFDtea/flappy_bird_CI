@@ -17,6 +17,23 @@ class FlappyGame:
     def __init__(self, w=600, h=500):
         self.w = w
         self.h = h
+        self.playerMidPos = 0
+        self.pipeMidPos = 0
+        self.horizontal = 0
+        self.vertical = 0
+        self.pipe = [{'x': 0, 'y': 0}]
+        self.bird_flapped = False
+        self.score = 0
+        self.ground = 0
+        self.mytempheight = 100
+        self.pipeVelX = 0
+        self.bird_velocity_y = 0
+        self.bird_Max_Vel_Y = 0   
+        self.birdAccY = 0
+        self.up_pipes = [{'x': 0, 'y': 0}]
+        self.down_pipes = [{'x': 0, 'y': 0}]        
+        self.bird_flap_velocity = 0
+
 
         self.screen = pygame.display.set_mode((self.w,self.h))
         self.elevation = self.h * .8
@@ -61,14 +78,14 @@ class FlappyGame:
 
     
     # Method to setup and run the game
-    def play_step(self):
+    def play_step(self, action):
         # Handling the key pressing events
         for event in pygame.event.get():
             if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
                 pygame.quit()
                 sys.exit()
             # Flapping when space or up is pressed
-            elif event.type == KEYDOWN and (event.key == K_SPACE or event.key == K_UP):
+            elif event.type == KEYDOWN and (event.key == K_SPACE or event.key == K_UP) or action == 1:
                 if self.vertical > 0:
                     self.bird_velocity_y = self.bird_flap_velocity
                     self.bird_flapped = True
@@ -108,7 +125,6 @@ class FlappyGame:
             self.bird_flapped = False
         # Updating bird height
         playerHeight = self.game_images['flappybird'].get_height()
-        print(self.vertical)
         self.vertical = self.vertical + min(self.bird_velocity_y, self.elevation - self.vertical - playerHeight)
 
         # move pipes to the left

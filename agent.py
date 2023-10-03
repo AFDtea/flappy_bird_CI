@@ -22,10 +22,10 @@ class Agent:
 
 
     def get_state(self, game):
-        bird_pos = game.playerMidPosition
-        m_pipe_pos = game.pipeMidePostion
+        bird_pos = game.playerMidPos
+        m_pipe_pos = game.pipeMidPos
         bird_x = game.horizontal
-        pipe_x = game.pipe['x']
+        pipe_x = game.pipe[0]['x']
 
         state = [
             # below lower pipe
@@ -57,8 +57,8 @@ class Agent:
 
         states, actions, rewards, next_states, dones = zip(*mini_sample)
         self.trainer.train_step(states, actions, rewards, next_states, dones)
-        #for state, action, reward, nexrt_state, done in mini_sample:
-        #    self.trainer.train_step(state, action, reward, next_state, done)
+        for state, action, reward, nexrt_state, done in mini_sample:
+           self.trainer.train_step(state, action, reward, next_state, done)
 
     def train_short_memory(self, state, action, reward, next_state, done):
         self.trainer.train_step(state, action, reward, next_state, done)
@@ -115,11 +115,11 @@ def train():
 
             print('Game', agent.n_games, 'Score', score, 'Record:', record)
 
-            # plot_scores.append(score)
-            # total_score += score
-            # mean_score = total_score / agent.n_games
-            # plot_mean_scores.append(mean_score)
-            # plot(plot_scores, plot_mean_scores)
+            plot_scores.append(score)
+            total_score += score
+            mean_score = total_score / agent.n_games
+            plot_mean_scores.append(mean_score)
+            plot(plot_scores, plot_mean_scores)
 
 
 if __name__ == '__main__':
