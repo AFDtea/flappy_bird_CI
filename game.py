@@ -38,7 +38,7 @@ class FlappyGame:
         self.screen = pygame.display.set_mode((self.w,self.h))
         self.elevation = self.h * .8
 
-        self.FPS = 10
+        self.FPS = 32
         self.FramePerSec = pygame.time.Clock()
 
         # Images
@@ -78,14 +78,14 @@ class FlappyGame:
 
     
     # Method to setup and run the game
-    def play_step(self, action):
+    def play_step(self):
         # Handling the key pressing events
         for event in pygame.event.get():
             if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
                 pygame.quit()
                 sys.exit()
             # Flapping when space or up is pressed
-            elif event.type == KEYDOWN and (event.key == K_SPACE or event.key == K_UP) or action == 1:
+            elif event.type == KEYDOWN and (event.key == K_SPACE or event.key == K_UP):
                 if self.vertical > 0:
                     self.bird_velocity_y = self.bird_flap_velocity
                     self.bird_flapped = True
