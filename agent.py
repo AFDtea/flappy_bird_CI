@@ -3,8 +3,8 @@ import random
 import numpy as np
 from collections import deque
 from game import FlappyGame
-#from model import Linear_QNet, QTrainer
-#from helper import plot
+from model import Linear_QNet, QTrainer
+from helper import plot
 
 MAX_MEMORY = 100_000
 BATCH_SIZE = 10
@@ -15,10 +15,10 @@ class Agent:
     def __init__(self):
         self.n_games = 0
         self.epsilon = 0 # randomness
-        self.gamma = 0.9 # discount rate
+        self.gamma = 0.9 # discount rate - smaller than 1 (around .8-.9)
         self.memory = deque(maxlen=MAX_MEMORY) # popleft()
-        self.model = None # TODO
-        self.trainer = None # TODO 
+        self.model = Linear_QNet(4, 256, 1)
+        self.trainer = QTrainer(self.model, lr=LR, gamma=self.gamma) 
 
 
     def get_state(self, game):
@@ -30,22 +30,21 @@ class Agent:
 
         state = [
             # below lower pipe
-            bird_y > down_pipe_y,
+            bird_y > down_pipe_y + 30,
 
             # above upper pipe
-            bird_y < up_pipe_y,
+            bird_y < up_pipe_y + 30,
 
             # Danger ground
             (bird_y > 300),
 
             # Danger pipe
-            pipe_x < (bird_x + 30),
-
-            # Flapped
-            game.bird_flapped
+            pipe_x < (bird_x + 150),
             ]
-
+        
         return np.array(state, dtype=int)
+        # return torch.tensor(state, dtype=torch.float)
+    
 
     def remember(self, state, action, reward, next_state, done):
         self.memory.append((state, action, reward, next_state, done)) # popleft if MAX_MEMORY is reached
@@ -58,7 +57,7 @@ class Agent:
 
         states, actions, rewards, next_states, dones = zip(*mini_sample)
         self.trainer.train_step(states, actions, rewards, next_states, dones)
-        for state, action, reward, nexrt_state, done in mini_sample:
+        for state, action, reward, next_state, done in mini_sample:
            self.trainer.train_step(state, action, reward, next_state, done)
 
     def train_short_memory(self, state, action, reward, next_state, done):
@@ -67,15 +66,14 @@ class Agent:
     def get_action(self, state):
         # random moves: tradeoff exploration / exploitation
         self.epsilon = 80 - self.n_games
-        final_move = [0,0,0]
         if random.randint(0, 200) < self.epsilon:
-            move = random.randint(0, 2)
-            final_move[move] = 1
+            # move = random.randint(0, 1)
+            final_move = random.randint(0, 1)
         else:
             state0 = torch.tensor(state, dtype=torch.float)
             prediction = self.model(state0)
             move = torch.argmax(prediction).item()
-            final_move[move] = 1
+            final_move = move
 
         return final_move
 
@@ -112,7 +110,7 @@ def train():
 
             if score > record:
                 record = score
-                # agent.model.save()
+                agent.model.save()
 
             print('Game', agent.n_games, 'Score', score, 'Record:', record)
 

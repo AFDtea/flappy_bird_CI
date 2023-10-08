@@ -64,12 +64,12 @@ class Agent:
     def get_action(self, state):
         # random moves: tradeoff exploration / exploitation
         self.epsilon = 80 - self.n_games
-        if random.randint(0 , 1) == 0:
-            final_move = 0
-        else:
+        if random.randint(0 , 10) == 0:
             final_move = 1
+        else:
+            final_move = 0
 
-        return 1
+        return final_move
 
 
 # def train():

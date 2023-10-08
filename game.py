@@ -78,7 +78,7 @@ class FlappyGame:
 
     
     # Method to setup and run the game
-    def play_step(self):
+    def play_step(self, action):
         # Handling the key pressing events
         for event in pygame.event.get():
             if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
@@ -86,7 +86,10 @@ class FlappyGame:
                 sys.exit()
             # Flapping when space or up is pressed
             elif event.type == KEYDOWN and (event.key == K_SPACE or event.key == K_UP):
-                if self.vertical > 0:
+                action = 1
+
+        if(action == 1):
+            if self.vertical > 0:
                     self.bird_velocity_y = self.bird_flap_velocity
                     self.bird_flapped = True
 
@@ -129,6 +132,7 @@ class FlappyGame:
 
         # move pipes to the left
         for upperPipe, lowerPipe in zip(self.up_pipes, self.down_pipes):
+            reward = reward + 1
             upperPipe['x'] += self.pipeVelX
             lowerPipe['x'] += self.pipeVelX
 
