@@ -132,13 +132,13 @@ class FlappyGame:
 
         # move pipes to the left
         for upperPipe, lowerPipe in zip(self.up_pipes, self.down_pipes):
-            reward = reward + 1
             upperPipe['x'] += self.pipeVelX
             lowerPipe['x'] += self.pipeVelX
 
         # Add a new pipe when the first is about
         # to cross the leftmost part of the screen
         if 240 < self.up_pipes[0]['x'] < (self.pipeVelX  * -1) + 241:
+            reward = reward + 100
             newpipe = self.createPipe()
             self.up_pipes.append(newpipe[0])
             self.down_pipes.append(newpipe[1 ])
@@ -150,7 +150,7 @@ class FlappyGame:
 
         self.update_ui()  
 
-        return reward, g_over, self.score
+        return 10, g_over, self.score
     
     def reset(self):
         # Initializing variables for game and bird

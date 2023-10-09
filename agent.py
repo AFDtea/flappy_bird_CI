@@ -48,6 +48,7 @@ class Agent:
 
     def remember(self, state, action, reward, next_state, done):
         self.memory.append((state, action, reward, next_state, done)) # popleft if MAX_MEMORY is reached
+        print("Reward: ", reward)
 
     def train_long_memory(self):
         if len(self.memory) > BATCH_SIZE:
@@ -112,7 +113,7 @@ def train():
                 record = score
                 agent.model.save()
 
-            print('Game', agent.n_games, 'Score', score, 'Record:', record)
+            print('Game', agent.n_games, 'Reward', reward, 'Score', score, 'Record:', record)
 
             plot_scores.append(score)
             total_score += score
