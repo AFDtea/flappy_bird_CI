@@ -3,6 +3,7 @@ import torch.nn as nn
 import torch.optim as optim
 import torch.nn.functional as F
 import os
+import copy
 
 class Linear_QNet(nn.Module):
     def __init__(self, input_size, hidden_size, output_size):
@@ -26,8 +27,13 @@ class Linear_QNet(nn.Module):
 class QTrainer:
     def __init__(self, model, lr, gamma):
         self.lr = lr
+        print("learning rate: ")
+        print(self.lr)
         self.gamma = gamma
         self.model = model
+        if model.linear1.weight is not None:
+            print("Initial weights for Linear1:")
+            print(self.model.linear1.weight)
         self.optimizer = optim.Adam(model.parameters(), lr=self.lr)
         self.criterion = nn.MSELoss()
 
@@ -48,7 +54,11 @@ class QTrainer:
 
         # 1: predicted Q values with the current state
         pred = self.model(state)
-        print('Predicted Q-values:', pred)
+        if torch.allclose(pred, torch.tensor([[0.]])):
+            print('Predicted Q-values:', pred)
+        if self.model.linear1.weight.grad is not None:
+            print("Gradients for Linear1 weights:")
+            print(self.model.linear1.weight.grad)
 
         target = pred.clone()
         for idx in range(len(done)):
@@ -66,3 +76,39 @@ class QTrainer:
         loss.backward()
 
         self.optimizer.step()
+
+if __name__ == "__main__":
+    LR = .00025
+    g = 0.85
+    model = Linear_QNet(5, 256, 1)
+    trainer = QTrainer(model, lr=LR, gamma=g)
+
+    # Assuming 'model' is your PyTorch model
+    # You can create a deep copy of the model to compare gradients
+    model_copy = copy.deepcopy(model)
+
+    # Define a small dummy input tensor
+    dummy_input = torch.randn(1, input_size)  # Adjust 'input_size' to match your model's input size
+
+    # Forward pass
+    output = model(dummy_input)
+    loss = your_loss_function(output, target)  # Define your loss function and target
+
+    # Backward pass
+    loss.backward()
+
+    # Compare gradients before and after backpropagation
+    for name, param in model.named_parameters():
+        if param.grad is not None:
+            # Get the corresponding parameter from the copied model
+            param_copy = getattr(model_copy, name)
+
+            # Calculate the gradient scaling factor
+            gradient_scaling_factor = param.grad.norm() / param_copy.grad.norm()
+
+            # Print the name of the parameter and the scaling factor
+            print(f"Parameter: {name}, Gradient Scaling Factor: {gradient_scaling_factor}")
+
+    # Reset gradients
+    model.zero_grad()
+    model_copy.zero_grad()

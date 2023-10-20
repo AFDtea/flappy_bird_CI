@@ -7,17 +7,17 @@ from model import Linear_QNet, QTrainer
 from helper import plot
 
 MAX_MEMORY = 100_000
-BATCH_SIZE = 10
-LR = 0.001
+BATCH_SIZE = 40
+LR = 0.00025
 
 class Agent:
 
     def __init__(self):
         self.n_games = 0
         self.epsilon = 0 # randomness
-        self.gamma = 0.9 # discount rate - smaller than 1 (around .8-.9)
+        self.gamma = 0.85 # discount rate - smaller than 1 (around .8-.9)
         self.memory = deque(maxlen=MAX_MEMORY) # popleft()
-        self.model = Linear_QNet(4, 256, 1)
+        self.model = Linear_QNet(5, 256, 1)
         self.trainer = QTrainer(self.model, lr=LR, gamma=self.gamma) 
 
 
@@ -38,6 +38,9 @@ class Agent:
             # Danger ground
             (bird_y > 300),
 
+            # Danger top
+            (bird_y < 60),
+
             # Danger pipe
             pipe_x < (bird_x + 150),
             ]
@@ -47,8 +50,11 @@ class Agent:
     
 
     def remember(self, state, action, reward, next_state, done):
+        if(state[3]):
+            print("Danger top")
+        if(state[2]):
+            print("Danger bottom")
         self.memory.append((state, action, reward, next_state, done)) # popleft if MAX_MEMORY is reached
-        print("Reward: ", reward)
 
     def train_long_memory(self):
         if len(self.memory) > BATCH_SIZE:
