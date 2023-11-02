@@ -1,7 +1,7 @@
 import pygame
 from pygame.locals import *
 import sys
-
+import numpy as np
 import random
 
 pygame.init()
@@ -33,6 +33,8 @@ class FlappyGame:
         self.up_pipes = [{'x': 0, 'y': 0}]
         self.down_pipes = [{'x': 0, 'y': 0}]        
         self.bird_flap_velocity = 0
+        self.observation = {}
+        self.info = {}
 
 
         self.screen = pygame.display.set_mode((self.w,self.h))
@@ -150,8 +152,12 @@ class FlappyGame:
         self.update_ui()  
 
         reward = reward + 1
-        print(reward)
-        return reward, g_over, self.score
+        self.observation = {self.vertical, self.up_pipes[0]['y'], self.down_pipes[0]['y'], 
+        self.horizontal, self.up_pipes[0]['x']}
+        self.observation = np.array(self.observation)
+
+
+        return self.observation, reward, g_over, self.info, self.score
     
     def reset(self):
         # Initializing variables for game and bird
@@ -187,6 +193,12 @@ class FlappyGame:
             {'x': self.w+240-self.mytempheight,
             'y': first_pipe[0]['y']}
         ]  
+
+        self.observation = {self.vertical, self.up_pipes[0]['y'], self.down_pipes[0]['y'], 
+        self.horizontal, self.up_pipes[0]['x']}
+        self.observation = np.array(self.observation)
+
+        return self.observation, {}
 
     def createPipe(self):
         offset = self.h/3.5
