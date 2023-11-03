@@ -8,18 +8,24 @@ class GameEnv(gym.Env):
     def __init__(self):
         self.render_mode = None
         self.action_space  = spaces.Discrete(1)
-        # Fourth value is bird_x which technically doesn't change
-        self.observation_space = spaces.Box(low=np.array([0, 0, 0, 0, 0]), high=np.array([500, 500, 500, 600, 600]), dtype=np.float32)
+        # Third value is bird_x which technically doesn't change
+        self.observation_space = spaces.Box(low=np.array([115, 0, 0, 0]), high=np.array([125, 800, 800, 800]), dtype=np.float32)
         self.game = FlappyGame()
    
     def step(self, action):
-        self.game.play_step(action)
+        observation, reward, done, info, score = self.game.play_step(action)
+        if(score > 1):
+            print(score)
+        return observation, reward, done, info
     
     def reset(self):
-        self.game.reset
+        observation, info = self.game.reset()
+        print(observation)
+        return observation, info
 
     def close(self):
         pygame.quit()
+
 
 
 # need to make the observation part in game.py
