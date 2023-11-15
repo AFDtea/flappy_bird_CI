@@ -208,6 +208,7 @@ class FlappyGame:
             self.up_pipes[0]['x']}
         self.observation = np.array(self.observation)
 
+        print(self.observation)
         return self.observation, {}
  
     def createPipe(self):

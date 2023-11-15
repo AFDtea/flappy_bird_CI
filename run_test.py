@@ -3,8 +3,8 @@ import gym
 from gym.envs.registration import register
 
 from stable_baselines3 import PPO
+from stable_baselines3.common.evaluation import evaluate_policy
 
-import gameenv
 
 register(
     id='FlappyGame-v0',  # Unique identifier for your environment
@@ -19,9 +19,17 @@ observation = env.reset()
 
 terminated = False
 
-for _ in range(1000):
-    action = env.action_space.sample()
-    observation, reward, terminated, info = env.step(action)
+model = PPO("MlpPolicy", env, verbose=1)  # Adjust policy and hyperparameters as needed
+
+# Train the model for 50,000 timesteps
+model.learn(total_timesteps=50000)
+
+# Save the trained model
+model.save("PPO_path")
+
+# for _ in range(1000):
+#     action = env.action_space.sample()
+#     observation, reward, terminated, info = env.step(action)
 
 env.close()
 
