@@ -8,12 +8,11 @@ import numpy as np
 
 
 
-env = gym.make("LunarLander-v2", render_mode="rgb_array")
+env = gym.make("FlappyBird-v0", render_mode="human")
 env.reset()
-check_env(env)
 
 models_dir = "models/PPO"
-model_path = (f"{models_dir}/210000.zip")
+model_path = (f"{models_dir}/200000.zip")
 
 model = PPO.load(model_path, env = env)
 
@@ -23,18 +22,18 @@ episodes = 10
 
 
 for ep in range(episodes):
-    obs = env.reset()
-    done = False
+    obs, info = env.reset()
+    terminated = False
     print(f"Episode {ep + 1}")
-    while not done:
+    while not terminated:
         env.render()
-        model.predict(obs)
-    #     print(f"Action: {action}")
+        action, _ = model.predict(obs)
+        # print(f"Action: {action}")
         
-    #     obs, reward, done, info = env.step(action)
-    #     print(f"Observation: {obs}")
-    #     print(f"Reward: {reward}")
-    # print("Episode finished\n")
+        obs, reward, terminated, truncated, info = env.step(action)
+        # print(f"Observation: {obs}")
+        # print(f"Reward: {reward}")
+    print("Episode finished\n")
 
     # Enjoy trained agent
 

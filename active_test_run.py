@@ -15,7 +15,7 @@ if not os.path.exists(logdir):
     os.makedirs(logdir)
 
 
-env = gym.make("LunarLander-v2")
+env = gym.make("FlappyBird-v0")
 
 model = PPO("MlpPolicy", env, verbose=1, tensorboard_log=logdir)
 
