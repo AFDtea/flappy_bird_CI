@@ -11,8 +11,8 @@ import numpy as np
 env = gym.make("FlappyBird-v0", render_mode="human")
 env.reset()
 
-models_dir = "models/PPO"
-model_path = (f"{models_dir}/1290000.zip")
+models_dir = "models/palm_PPO"
+model_path = (f"{models_dir}/9000000.zip")
 
 model = PPO.load(model_path, env = env)
 
