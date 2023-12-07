@@ -1,7 +1,7 @@
 import pygame
 from pygame.locals import *
 import sys
-
+import numpy as np
 import random
 
 pygame.init()
@@ -33,6 +33,8 @@ class FlappyGame:
         self.up_pipes = [{'x': 0, 'y': 0}]
         self.down_pipes = [{'x': 0, 'y': 0}]        
         self.bird_flap_velocity = 0
+        self.observation = {}
+        self.info = {}
 
 
         self.screen = pygame.display.set_mode((self.w,self.h))
@@ -100,7 +102,10 @@ class FlappyGame:
             g_over = True
             self.reset()
             reward = -100
-            return reward, g_over, self.score
+            self.observation = {self.horizontal, self.vertical, self.pipeMidPos, 
+                                self.up_pipes[0]['x']}
+
+            return self.observation, reward, g_over, {}, self.score
 
         # check for your_score
         self.playerMidPos = self.horizontal + self.game_images['flappybird'].get_width()/2
@@ -137,10 +142,12 @@ class FlappyGame:
 
         # Add a new pipe when the first is about
         # to cross the leftmost part of the screen
+        new_pipe = False
         if 240 < self.up_pipes[0]['x'] < (self.pipeVelX  * -1) + 241:
             newpipe = self.createPipe()
             self.up_pipes.append(newpipe[0])
-            self.down_pipes.append(newpipe[1 ])
+            self.down_pipes.append(newpipe[1])
+            new_pipe = True
 
         # if the pipe is out of the screen, remove it
         if self.up_pipes[0]['x'] < -self.game_images['pipeimage'][0].get_width():
@@ -150,8 +157,17 @@ class FlappyGame:
         self.update_ui()  
 
         reward = reward + 1
-        print(reward)
-        return reward, g_over, self.score
+
+        # setting observation variable
+            # Second pipe if it exists
+        if(new_pipe):
+            self.observation = {self.horizontal, self.vertical, self.pipeMidPos, 
+            self.up_pipes[1]['x']}
+        else:
+            self.observation = {self.horizontal, self.vertical, self.pipeMidPos,
+                                self.up_pipes[0]['x']}
+
+        return self.observation, reward, g_over, {}, self.score
     
     def reset(self):
         # Initializing variables for game and bird
@@ -188,6 +204,13 @@ class FlappyGame:
             'y': first_pipe[0]['y']}
         ]  
 
+        self.observation = {self.horizontal, self.vertical, self.pipeMidPos,
+            self.up_pipes[0]['x']}
+        self.observation = np.array(self.observation)
+
+        print(self.observation)
+        return self.observation, {}
+ 
     def createPipe(self):
         offset = self.h/3.5
         pipeHeight = self.game_images['pipeimage'][0].get_height()
@@ -287,7 +310,7 @@ if __name__ == "__main__":
                 elif event.type == KEYDOWN and (event.key == K_SPACE or event.key == K_UP):
                     game.reset()
                     while True:
-                        reward, game_over, score = game.play_step()
+                        observation, reward, game_over, id, score = game.play_step(0)
 
                         if game_over == True:
                             break
@@ -295,6 +318,6 @@ if __name__ == "__main__":
                     game.update_bird_ui()
 
 
-    
+     
 
     #print('Final Score', score)    
