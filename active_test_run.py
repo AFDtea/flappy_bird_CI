@@ -1,5 +1,3 @@
-
-
 import gymnasium as gym
 import flappy_bird_gymnasium
 from stable_baselines3 import A2C
